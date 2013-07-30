@@ -1,0 +1,134 @@
+\chapter{Emscripten入門と実践}
+\label{chap:emscripten}
+
+Emscriptenとはc、c++のコードやLLVMバイトコードを
+JavaScriptに変換するプロダクトとして有名ですよね？
+ただ、日本語の情報が少なく導入の部分で躓く人が多いと思います。
+ここではEmscriptenを動作させるための環境構築から、
+コマンドラインツールを変換するまでを順を追って解説します。
+
+
+\section{環境構築}
+
+まずはemscriptenを動作させるための環境構築を行います。
+ここではubuntu12.04 64bit版を前提とします。
+windowsやmacをお使いの方は仮想環境を作成してください。
+
+\subsection{最低限必要なツールをインストール}
+
+Emscriptenを使う際に必要なツールをインストールします。
+
+\begin{lstlisting}
+$ sudo apt-get install -y git default-jre curl nodejs
+\end{lstlisting}
+
+
+\subsection{LLVMのインストール}
+
+執筆時点でのEmscriptenに対応している最新版である
+LLVM3.2をインストールします。
+ubuntu12.04用のLLVMバイナリが用意されていますので、
+ダウンロードして展開するだけです(ソースからコンパイルする場合は
+そこそこ時間がかかりますので)。
+
+\begin{lstlisting}[language=Sh]
+$ curl http://llvm.org/releases/3.2/clang+llvm-3.2-x86_64-li\
+nux-ubuntu-12.04.tar.gz | tar -xz
+\end{lstlisting}
+
+\subsection{emscriptenのインストール}
+
+\subsubsection*{emscriptenの入手}
+
+emscriptenはgithubから入手します。
+emscriptenのレポジトリが保存されたディレクトリへのパスも
+通しておきましょう。
+
+\begin{lstlisting}[language=Sh]
+$ git clone git@github.com:kripken/emscripten.git
+\end{lstlisting}
+
+\subsubsection*{.emscriptenの編集}
+
+何もオプションなどをいれずに\texttt{emcc}コマンドを実行します。
+すると、ホームディレクトリに
+.emscriptenというファイルが作成されます。
+このファイルはemscriptenの各ツールを動かすための設定を行なっています。
+最低限\texttt{EMSCRIPTEN\_ROOT}と\texttt{LLVM\_ROOT}だけは設定してください。
+以下設定例。
+
+\begin{lstlisting}
+import os
+
+# emscriptenのレポジトリのパス
+EMSCRIPTEN_ROOT = os.path.expanduser('~/emscripten')
+
+# ダウンロードしたLLVMのbinディレクトリのパス
+LLVM_ROOT = os.path.expanduser('~/clang+llvm-3.2-x86_64-linux-ubuntu-12.04/bin')
+
+# ...以下略
+\end{lstlisting}
+
+\section{Hello world!}
+
+最初に動かすプログラムと言ったらhello worldです。
+以下のようなcファイル(hello.c)を用意しましょう。
+
+\begin{lstlisting}
+#include <stdio.h>
+
+int main(void) {
+  printf("Hello world!");
+}
+\end{lstlisting}
+
+このhello.cを\texttt{emcc}コマンドを使ってコンパイルします。
+
+\begin{lstlisting}
+$ emcc hello.c -o hello.html
+\end{lstlisting}
+
+見てわかるように、\texttt{-o} オプションで出力するファイル名を設定することができます。
+拡張子によって出力するファイルの種類を自動的に決めてくれます。
+出力されたhello.htmlを開くと画面の下の方にhello worldと表示されているはずです。
+
+\section{コマンドラインツールを変換する}
+
+ネイティブのコマンドラインツールを
+JavaScriptに移植するというのはemscriptenの使用動機の
+一つではないでしょうか。
+ほとんどのアプリケーションで使われているzlib(に含まれるzpipe.c)を
+JavaScriptの関数として使えるようにしてみましょう。
+
+\subsection{zlibの入手}
+
+zlibの公式サイトから最新のzlibをダウンロード、展開します。
+
+\begin{lstlisting}
+$ curl http://zlib.net/zlib-1.2.8.tar.gz | tar -xz
+\end{lstlisting}
+
+\subsection{emscripten用にzlibをビルドする}
+
+ネイティブのアプリケーションのように
+\texttt{configure}、\texttt{make}します。
+ただし、emscriptenでは\texttt{configure}の替わりに
+\texttt{emconfigure}コマンドを使います。
+
+\begin{lstlisting}
+$ cd path/to/zlib-1.2.8
+$ emconfigure ./configure
+$ make
+\end{lstlisting}
+
+\subsection{ブラウザで動くようにする}
+
+なんとなくわかると思いますが、
+\texttt{emcc zpipe.c libz.a -o zpipe.js}で単純にコンパイルするだけでは
+動きません。色々とラップしたりする必要があります。
+
+Moduleとかね。
+
+\subsection{入出力の最適化}
+
+\_read、\_write書き換え

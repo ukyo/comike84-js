@@ -1,0 +1,41 @@
+\documentclass{jsbook}
+
+\usepackage{listings, jlisting}
+\usepackage{color}
+
+\lstdefinestyle{custom}{
+xleftmargin=\parindent,
+basicstyle=\footnotesize\ttfamily
+}
+
+\lstset{
+extendedchars=true,
+style=custom
+}
+
+
+\begin{document}
+
+
+
+\chapter{プロトタイプ}
+\label{chap:proto}
+
+最近ECMAScript5(以下ES5)が実用レベルで普及してきました。
+ES5ではより直接的にプロトタイプを触ることができるようになっています。
+つまりプロトタイプを学び直すのはいつやるのかと言ったら今なわけです。
+\texttt{\_\_proto\_\_}とか関数オブジェクトの\texttt{prototype}プロパティとか
+ごっちゃになっていませんか？
+
+この章ではそもそもプロトタイプってなんなのってことから、
+クラス風の継承を実現する方法まで説明します。
+読み終えたときにはプロトタイプについて(特に単純で強力なものだってことが)理解できてることでしょう。
+
+\begin{lstlisting}
+var a = {foo: 1, bar: 2};
+console.log(a.__proto__, Object.getPrototypeOf(a));
+// aの[[Prototype]]はObject.prototypeである
+console.log(Object.getPrototypeOf(a) === Object.prototype);
+\end{lstlisting}
+
+\end{document}

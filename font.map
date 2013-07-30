@@ -1,0 +1,11 @@
+%%
+%% ASCII pTeX
+%%
+
+%pcr       m               Ricty-Reqular.ttf
+%pcr       b               Ricty-Bold.ttf
+rml       H               ipaexm.ttf
+rmlv      V               ipaexm.ttf
+gbm       H               KozGoPro-Regular.otf
+gbmv      V               KozGoPro-Regular.otf
+
