@@ -17,10 +17,9 @@ Number(数値)、
 String(文字列)の5種類が存在し、
 それ以外のものはObject(オブジェクト型)となります。
 
-\section{オブジェクトの概要}
+\section{オブジェクトとは}
 
-オブジェクト(オブジェクト型のデータ)を
-一言で言うとプロパティの集合です。
+オブジェクト(オブジェクト型のデータ)は一言で言うとプロパティの集合です。
 プロパティにはコード上でプロパティ名を指定してアクセスできるプロパティである
 データプロパティとアクセサプロパティ、内部的に使われる
 内部プロパティ\footnote{[[Hoge]]のように記述します}の3種類に分類されます。
@@ -352,7 +351,7 @@ console.log(o.__proto__ === proto); // true
 
 \begin{lstlisting}
 var toString = Object.prototype.toString;
-// [[Class]] は"[object Hoge]"の"Hoge"の部分です
+// \jsclass は"[object Hoge]"の"Hoge"の部分です
 console.log(toString.call([])); // "[object Array]"
 console.log(toString.call(function() {})); // "[object Function]"
 \end{lstlisting}

@@ -18,9 +18,4 @@
 
 \section*{対象のブラウザ}
 
-本書で使われているサンプルコード等を全て動作させるためには
-ECMAScript5.1に準拠している、
-TypedArrayが実装されている必要があります。
-動作環境としてはChrome、Firefox、IE10+を推奨します。
-
-\section*{}
+Chrome、Firefox、IE10+

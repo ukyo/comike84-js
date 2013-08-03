@@ -344,7 +344,7 @@ var zpipe = (function() {
 \subsection{入出力処理を最適化する}
 
 emscriptenでは実際の入出力処理は
-\js{\_read}、\js{\_write}関数から行われます。
+\js{_read}、\js{_write}関数から行われます。
 この中で入出力1byteごとに\js{Module.input}、\js{Module.output}
 に登録した関数が呼び出されます。
 これを\js{Uint8Array.prototype.set}メソッドで
