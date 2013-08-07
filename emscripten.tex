@@ -1,22 +1,22 @@
-\chapter{Emscripten入門と実践}
+\chapter{emscripten入門}
 \label{chap:emscripten}
 
-Emscriptenとはc、c++のコードやLLVMバイトコードを
+emscripten\cite{emscripten}はc、c++のコードやLLVM\cite{llvm}バイトコードを
 JavaScriptに変換するプロダクトとして有名ですよね？
 ただ、日本語の情報が少なく導入の部分で躓く人が多いと思います。
-ここではEmscriptenを動作させるための環境構築から、
+ここではemscriptenを動作させるための環境構築から、
 コマンドラインツールを変換するまでを順を追って解説します。
 
 
 \section{環境構築}
 
 まずはemscriptenを動作させるための環境構築を行います。
-ここではubuntu12.04 64bit版を前提とします。
+ここではubuntu12.04 64bit版を前提として話を進めます。
 windowsやmacをお使いの方は仮想環境を作成してください。
 
 \subsection{最低限必要なツールをインストール}
 
-Emscriptenを使う際に必要なツールをインストールします。
+emscriptenを使う際に必要なツールをインストールします。
 
 \begin{lstlisting}[style=command]
 $ sudo apt-get install -y git default-jre curl nodejs make
@@ -25,7 +25,7 @@ $ sudo apt-get install -y git default-jre curl nodejs make
 
 \subsection{LLVMのインストール}
 
-執筆時点でのEmscriptenに対応している最新版である
+執筆時点でのemscriptenに対応している最新版である
 LLVM3.2をインストールします。
 ubuntu12.04用のLLVMバイナリが用意されていますので、
 ダウンロードして展開するだけです(ソースからコンパイルする場合は
@@ -59,13 +59,10 @@ $ git clone git@github.com:kripken/emscripten.git
 
 \begin{lstlisting}
 import os
-
 # emscriptenのレポジトリのパス
 EMSCRIPTEN_ROOT = os.path.expanduser('~/emscripten')
-
 # ダウンロードしたLLVMのbinディレクトリのパス
 LLVM_ROOT = os.path.expanduser('~/clang+llvm-3.2-x86_64-linux-ubuntu-12.04/bin')
-
 # ...以下略
 \end{lstlisting}
 
@@ -76,7 +73,6 @@ LLVM_ROOT = os.path.expanduser('~/clang+llvm-3.2-x86_64-linux-ubuntu-12.04/bin')
 
 \begin{lstlisting}
 #include <stdio.h>
-
 int main(void) {
   printf("Hello world!");
 }
@@ -88,8 +84,10 @@ int main(void) {
 $ emcc hello.c -o hello.html
 \end{lstlisting}
 
-見てわかるように、\texttt{-o} オプションで出力するファイル名を設定することができます。
-拡張子によって出力するファイルの種類を自動的に決めてくれます。
+見てわかるように、\texttt{-o} オプションで
+出力するファイル名を設定することができます。
+emscriptenは拡張子によって出力するファイルの種類を
+自動的に決めてくれます。
 出力されたhello.htmlを開くと画面の下の方にhello worldと表示されているはずです。
 
 \section{コマンドラインツールを変換する}
@@ -119,6 +117,7 @@ $ git clone hogehoge
 \begin{lstlisting}[style=command]
 .
 ├── Gruntfile.coffee
+├── bench
 ├── dist
 ├── package.json
 ├── src
@@ -128,15 +127,16 @@ $ git clone hogehoge
 
 \begin{itemize}
  \item \textbf{Gruntfile.coffee} - gruntのビルドファイルです
+ \item \textbf{bench} - ベンチマーク用のファイルを置いています
  \item \textbf{dist} - emscriptenによって生成されたファイルを置きます
  \item \textbf{package.json} - 主にgruntの依存ファイルを記述しています
- \item \textbf{src} - 後で開設するソースコードを置いています
+ \item \textbf{src} - 後で解説するソースコードを置いています
  \item \textbf{test} - テストコードを置いています
- \item \textbf{zlib} - zlibのソースコード一式が置いています
+ \item \textbf{zlib} - zlibのソースコード一式を置いています
 \end{itemize}
 
 特に注釈がない場合、カレントディレクトリは
-レポジトリのルートとします。
+レポジトリのルートディレクトリとします。
 
 \subsection{zlibのビルド}
 
@@ -144,15 +144,14 @@ $ git clone hogehoge
 \texttt{configure}、\texttt{make}します。
 ただし、emscriptenでは\texttt{configure}の替わりに
 \texttt{emconfigure}コマンドを使います。
+zlibの場合は特に問題なく上手く行きますが、
+ものによっては手を加えないとビルドすら通らないものもあります。
 
 \begin{lstlisting}[style=command]
 $ cd zlib
 $ emconfigure ./configure
 $ make
 \end{lstlisting}
-
-zlibの場合は特に問題なく上手く行きますが、
-ものによっては手を加えないとビルドすら通らないものもあります。
 
 \subsection{zpipe.cのビルド}
 
@@ -161,10 +160,8 @@ zpipe.cは標準入力をzlib形式で圧縮・展開する
 ビルドします。
 
 \begin{lstlisting}[style=command]
-$ # 圧縮
-$ zpipe < foo.txt > foo.txt.zlib
-$ # 展開
-$ zpipe -d < foo.txt.zlib > foo.txt
+$ zpipe < foo.txt > foo.txt.zlib # 圧縮
+$ zpipe -d < foo.txt.zlib > foo.txt # 展開
 \end{lstlisting}
 
 ネイティブのアプリケーションと同じように
@@ -182,28 +179,10 @@ $ emcc zlib/examples/zpipe.c zlib/libz.a -o dist/zpipe.raw.js
 \subsection{ブラウザで動くようにする}
 
 emscriptenで変換されたcファイルは、
-ヒープメモリ領域の確保など環境構築を行なって
+ヒープ領域の確保など前処理を行なって
 main関数を呼ぶまでの一連の動作を行います。
 つまり、この処理を関数の内部に内包するようにラップしてやると
 呼び出しごとにmain関数の処理を行うことができます。
-
-\begin{lstlisting}
-var foo = (function() {
-  function run(args, inputBytes) {
-    var Module = {
-      arguments: args
-    };
-    /* ここにemscriptenで生成されたコードを入れます */
-    return hogehoge;
-  }
-
-  return {
-    api1: run.bind(null, args1),
-    api2: run.bind(null, args2)
-  }:
-})();
-\end{lstlisting}
-
 
 オプションや標準入出力をどのように扱うかは\js{Module}オブジェクト
 のプロパティとして定義します。
@@ -215,42 +194,51 @@ emscriptenで標準入出力系のコマンドラインツールを変換した�
 使えるようにしたAPIを作るには
 基本的に入出力にTypedArray(特にUint8Array)を使います。
 以下は今回使うファイルです。
+header.jsとfooter.jsの2ファイルありますが、
 見た目の都合上、一緒に書きます。
 
 \begin{lstlisting}
 /* header.js */
 var zpipe = (function() {
-  function run(decompress, inputBytes) {
-    var inputIndex, outputIndex, outputBytes, Module;
-    
-    inputIndex = 0;
-    outputIndex = 0;
-    outputBytes = new Uint8Array(0x8000);
+  /*
+  emscriptenで生成されたコードと同一スコープになる部分は
+  変数名の重複に気をつけましょう。
+  ここではプレフィックスとして$をつけています。
+  */
+  function run($args, $inputBytes) {
+    var $inputIndex, $outputIndex, $outputBytes, Module;
+
+    $inputIndex = 0;
+    $outputIndex = 0;
+    $outputBytes = new Uint8Array(0x8000);
     Module = {
-      arguments: decompress ? ['-d'] : [],
+      arguments: $args,
       // 標準入力を1byteずつ読みだす
       stdin: function() {
-        return inputBytes[inputIndex++];
+        return $inputIndex < $inputBytes.length ?
+          $inputBytes[$inputIndex++] : null;
       },
       // 標準出力に1byteずつ書きこむ
       stdout: function(x) {
         if (x === null) return;
-        if (outputIndex === ouputBytes.length) {
-          tmp = new Uint8Array(outputBytes.length * 2);
-          tmp.set(outputBytes);
-          outputBytes = tmp;
+        if ($outputIndex === $outputBytes.length) {
+          var tmp = new Uint8Array($outputBytes.length * 2);
+          tmp.set($outputBytes);
+          $outputBytes = tmp;
         }
-        outputBytes[outputIndex] = x;
+        $outputBytes[$outputIndex++] = x;
       }
     };
+  
+  /* emscripten code */
     
 /* footer.js */
-    return new Uint8Array(outputBytes.buffer.slice(0, outputIndex));
-  };
-  
+    return new Uint8Array($outputBytes.buffer.slice(0, $outputIndex));
+  }
+
   return {
-    compress: run.bind(null, false),
-    decompress: run.bind(null, true)
+    compress: run.bind(null, []),
+    decompress: run.bind(null, ['-d'])
   };
 })();
 \end{lstlisting}
@@ -277,9 +265,9 @@ var decomped = zpipe.decompress(comped);
 \texttt{emcc}コマンドを使うとき、
 \texttt{-O2}オプションを使うことでコードが最適化されます。
 具体的には、
-asm.js仕様への準拠、
-relooperアルゴリズムによる最適化、
-Closure Compilerによるコードのminifyなどが行われます
+asm.js\cite{asm}仕様への準拠、
+relooperアルゴリズム\cite{relooper}による最適化、
+Closure Compiler\cite{closure}によるコードのminifyなどが行われます
 (オプションとして\texttt{--closure 0}を付加するとminifyされません)。
 
 \begin{lstlisting}[style=command]
@@ -289,11 +277,11 @@ $ # --closure 0 でminify無効化
 $ emcc -O2 --closure 0 foo.c -o foo.js
 \end{lstlisting}
 
-\subsection{環境構築を一回だけ行う}
+\subsection{前処理を一回だけ行う}
 
 main関数を呼ぶまでの前処理を一回だけ行なって
 API呼び出しごとにmain関数だけ呼び出すという方法です。
-main関数が呼ばれないようにするには
+ファイル読み込み時にmain関数が呼ばれないようにするには
 \js{Module.noInitialRun}フラグを{\jstrue}にします。
 手動でmain関数を呼ぶには\js{Module.callMain}メソッドを呼び出します。
 引数にはオプションとして文字列の配列を渡します。
@@ -301,42 +289,36 @@ main関数が呼ばれないようにするには
 \begin{lstlisting}
 /* header.js */
 var zpipe = (function() {
-  var inputIndex, outputIndex, Module, outputBytes, Module;
+  var $inputIndex, $outputIndex, $inputBytes, $outputBytes, Module;
 
-  outputBytes = new Uint8Array(0x8000);
+  $outputBytes = new Uint8Array(0x8000);
   Module = {
-    'noInitialRun': true,
-    'stdin': function() {
-      return inputBytes[inputIndex++];
-    },
-    'stdout': function(x) {
-      if (x === null) return;
-      if (outputIndex === ouputBytes.length) {
-        var tmp = new Uint8Array(outputBytes.length * 2);
-        tmp.set(outputBytes);
-        outputBytes = tmp;
-      }
-      outputBytes[outputIndex] = x;
-    }
+    noInitialRun: true,
+    stdin: function() {/* 省略 */},
+    stdout: function(x) {/* 省略 */}
   };
 
   /* emscripten code */
 
 /* footer.js */
-  /*
-  実際に呼び出される関数。
-  indexの初期化はここで行う。
-  */
-  function zpipeRun(decompress, inputBytes) {
-    inputIndex = 0;
-    outputIndex = 0;
-    Module.callMain(decompress);
-    return new Uint8Array(outputBytes.buffer.slice(0, outputIndex));
+  function $run(args, inputBytes) {
+    $inputIndex = 0;
+    $outputIndex = 0;
+    $inputBytes = inputBytes;
+
+    // stdio, stdoutで使われるフラグを初期化
+    FS.streams[1].eof = false;
+    FS.streams[1].error = false;
+    FS.streams[2].eof = false;
+    FS.streams[2].error = false;
+
+    Module.callMain(args);
+    return new Uint8Array($outputBytes.buffer.slice(0, $outputIndex));
   }
 
   return {
-    compress: zpipeRun.bind(null, []),
-    decompress: zpipeRun.bind(null, ['-d'])
+    compress: $run.bind(null, []),
+    decompress: $run.bind(null, ['-d'])
   };
 })();
 \end{lstlisting}
@@ -347,24 +329,201 @@ emscriptenでは実際の入出力処理は
 \js{\_read}、\js{\_write}関数から行われます。
 この中で入出力1byteごとに\js{Module.input}、\js{Module.output}
 に登録した関数が呼び出されます。
-これを\js{Uint8Array.prototype.set}メソッドで
-一気に入出力処理を行うことで高速化を図ります。
+これを\js{Module.input}、\js{Module.output}を使わず
+入出力処理を一遍に行うように関数を書き換えて高速化を図ります。
+ただし、実際にコードを書き換えるのではなく同一スコープ上
+で元のコードより後ろに
+\js{\_read}、\js{\_write}関数を定義することで
+書き換えます。いわゆるモンキーパッチと呼ばれる手法です。
+これはどちらかというと正攻法ではないし、
+どんな状況でも使えるテクニックではないですが、
+そういうこともできるということで紹介します。
 
-これはどちらかというと正攻法ではないのですが、
-そういうこともできるということで。
+\begin{lstlisting}
+/* header.js */
+var zpipe = (function() {
+  var $inputIndex, $outputIndex, $inputBytes, $outputBytes, Module;
 
+  $outputBytes = new Uint8Array(0x8000);
+  Module = { noInitialRun: true };
 
+  /* emscripten code */
+
+/* footer.js */
+  function _read(fildes, buf, nbyte) {
+    // ssize_t read(int fildes, void *buf, size_t nbyte);
+    // http://pubs.opengroup.org/onlinepubs/000095399/functions/read.html
+    var stream = FS.streams[fildes];
+    if (!stream) {
+      ___setErrNo(ERRNO_CODES.EBADF);
+      return -1;
+    } else if (!stream.isRead) {
+      ___setErrNo(ERRNO_CODES.EACCES);
+      return -1;
+    } else if (nbyte < 0) {
+      ___setErrNo(ERRNO_CODES.EINVAL);
+      return -1;
+    } else {
+      var bytesRead;
+      if (stream.object.isDevice) {
+        if (stream.object.input) {
+          /* 元コード
+          bytesRead = 0;
+          while (stream.ungotten.length && nbyte > 0) {
+            HEAP8[((buf++)|0)]=stream.ungotten.pop()
+            nbyte--;
+            bytesRead++;
+          }
+          for (var i = 0; i < nbyte; i++) {
+            try {
+              var result = stream.object.input();
+            } catch (e) {
+              ___setErrNo(ERRNO_CODES.EIO);
+              return -1;
+            }
+            if (result === null || result === undefined) break;
+            bytesRead++;
+            HEAP8[(((buf)+(i))|0)]=result
+          }
+          */
+          /* 追加部分始 */
+          bytesRead = Math.min($inputBytes.length - $inputIndex, nbyte);
+          HEAPU8.set($inputBytes.subarray($inputIndex, $inputIndex + bytesRead), buf);
+          $inputIndex += bytesRead;
+          return bytesRead;
+          /* 追加部分終 */
+        } else {
+          ___setErrNo(ERRNO_CODES.ENXIO);
+          return -1;
+        }
+      } else {
+        var ungotSize = stream.ungotten.length;
+        bytesRead = _pread(fildes, buf, nbyte, stream.position);
+        if (bytesRead != -1) {
+          stream.position += (stream.ungotten.length - ungotSize) + bytesRead;
+        }
+        return bytesRead;
+      }
+    }
+  }
+
+  function _write(fildes, buf, nbyte) {
+    // ssize_t write(int fildes, const void *buf, size_t nbyte);
+    // http://pubs.opengroup.org/onlinepubs/000095399/functions/write.html
+    var stream = FS.streams[fildes];
+    if (!stream) {
+      ___setErrNo(ERRNO_CODES.EBADF);
+      return -1;
+    } else if (!stream.isWrite) {
+      ___setErrNo(ERRNO_CODES.EACCES);
+      return -1;
+    } else if (nbyte < 0) {
+      ___setErrNo(ERRNO_CODES.EINVAL);
+      return -1;
+    } else {
+      if (stream.object.isDevice) {
+        if (stream.object.output) {
+          /* 元コード
+          for (var i = 0; i < nbyte; i++) {
+            try {
+              stream.object.output(HEAP8[(((buf)+(i))|0)]);
+            } catch (e) {
+              ___setErrNo(ERRNO_CODES.EIO);
+              return -1;
+            }
+          }
+          stream.object.timestamp = Date.now();
+          return i;
+          */
+          /* 追加部分始 */
+          var outputBytesLen, needLen, tmp;
+          outputBytesLen = $outputBytes.length;
+          needLen = $outputIndex + nbyte;
+          if (outputBytesLen < needLen) {
+            while (outputBytesLen < needLen) outputBytesLen *= 2;
+            tmp = new Uint8Array(outputBytesLen);
+            tmp.set($outputBytes);
+            $outputBytes = tmp;
+          }
+          $outputBytes.set(HEAPU8.subarray(buf, buf + nbyte), $outputIndex);
+          $outputIndex += nbyte;
+          return nbyte;
+          /* 追加部分終 */
+        } else {
+          ___setErrNo(ERRNO_CODES.ENXIO);
+          return -1;
+        }
+      } else {
+        var bytesWritten = _pwrite(fildes, buf, nbyte, stream.position);
+        if (bytesWritten != -1) stream.position += bytesWritten;
+        return bytesWritten;
+      }
+    }
+  }
+
+  function $run(args, inputBytes) {/* 省略 */}
+
+  return {
+    compress: $run.bind(null, []),
+    decompress: $run.bind(null, ['-d'])
+  };
+})();
+\end{lstlisting}
+
+\subsection{ベンチマーク}
+
+\texttt{-O2}オプションのみ、
+\texttt{-O2}オプション+前処理を1回にする最適化、
+\texttt{-O2}オプション+前処理を1回にする最適化+IO最適化
+とzlib.js各々について圧縮・展開のベンチマークを取りました(ただし、圧縮
+に関しては単純な比較はできないためzlib.jsは除外しています)。
+それぞれは50回の平均の数値です。
+
+\subsubsection*{使用ファイル}
+圧縮にはtest/pg30601.txt、展開にはtest/pg30601.txt.zlibを使いました。
+
+\subsubsection*{動作環境}
+
+OS:ubuntu 12.04、CPU:Core2DuoP8600@2.40GHz、メモリ:4GB、
+ブラウザはChrome 30とFirefox 22(asm.jsあり)でベンチマークを行いました。
+
+\begin{table}[htb]
+\centering
+\caption{圧縮}
+\label{tab:compress}
+\begin{tabular}{|l|r|r|} \hline
+  & Firefox22 & Chrome30\\ \hline
+O2のみ & 451 & 530\\ \hline
+O2 + 前処理1回 & 107 & 147\\ \hline
+O2 + 前処理1回 + IO最適化 & 74 & 104\\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htb]
+\centering
+\caption{展開}
+\label{tab:decompress}
+\begin{tabular}{|l|r|r|} \hline
+  & Firefox22 & Chrome30\\ \hline
+O2のみ & 165 & 136\\ \hline
+O2 + 前処理1回 & 35 & 55\\ \hline
+O2 + 前処理1回 + IO最適化 & 7 & 17\\ \hline
+zlib.js & 15 & 10\\ \hline
+\end{tabular}
+\end{table}
 
 \section{Gruntタスク}
 
-本書で行ったコンパイル、ファイル連結などはGruntfile.coffee
+本書で行ったコンパイル、ファイル連結、開発サーバの立ち上げなどはGruntfile.coffee
 にGruntタスクとして登録してあります。
 
-\begin{itemize}
- \item grunt
-\end{itemize}
-
-
 \begin{lstlisting}[style=command]
-$ emcc -O2 foo.c
+$ # grunt-cliをインストールしていない場合は
+$ npm install -g grunt-cli
+$ # ローカル環境にインストール
+$ npm install
+$ # 全てのファイルをビルドします
+$ grunt build
+$ # 開発サーバの立ち上げ
+$ grunt devserver
 \end{lstlisting}

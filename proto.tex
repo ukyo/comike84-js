@@ -1,14 +1,14 @@
 \chapter{オブジェクト}
 \label{chap:proto}
 
-この章ではECMAScript5.1(以下ES5)をベースにしてオブジェクトについて
+この章ではECMAScript5.1\cite{es5}(以下ES5)をベースにしてオブジェクトについて
 学びます。
 流れとしてはES5仕様書のオブジェクトの章と
 それに関連する項目についての意訳と補足といった感じで進めていきます。
 
 \section{プリミティブ型とオブジェクト型}
 
-ECMAScript値の型として6つの型があります。
+ECMAScriptでは値の型が6つあります。
 プリミティブ型として
 Undefined(\jsundef)、
 Boolean({\jstrue} 、\jsfalse)、
@@ -84,7 +84,7 @@ ES5で定義されている任意の値をとります。
 \subsection{\jswritable}
 
 プロパティの\jsvalue 属性が書き換え可能かどうかを表します。
-Booleanの値をとります。
+Boolean値をとります。
 {\jsfalse}の場合、プロパティは読み出し専用となります。
 デフォルト値は{\jsfalse}です。
 
@@ -105,12 +105,12 @@ Booleanの値をとります。
 
 \subsection{\jsenumerable}
 
-Booleanの値をとります。\jstrue の場合、for-in文でプロパティ名が列挙されます。
+Boolean値をとります。\jstrue の場合、for-in文でプロパティ名が列挙されます。
 デフォルト値は{\jsfalse}です。
 
 \subsection{\jsconfigurable}
 
-Booleanの値をとります。{\jsfalse}の場合、プロパティの属性を変更(ただし、\jsvalue の値は変更できる)
+Boolean値をとります。{\jsfalse}の場合、プロパティの属性を変更(ただし、\jsvalue の値は変更できる)
 することやプロパティの削除ができなくなります。
 デフォルト値は{\jsfalse}です。
 
@@ -139,7 +139,7 @@ ES5では実際のコード上で
 プロパティの属性を変更したり、プロパティ自体を定義することができるようになりました。
 
 プロパティディスクリプタの種類を判定したり、オブジェクトを
-プロパティディスクリプタに変換するアルゴリズムについては以下で解説します。
+プロパティディスクリプタに変換する内部的なアルゴリズムについては以下で解説します。
 
 \subsection{IsAccessorDescriptor(Desc)}
 
@@ -360,7 +360,7 @@ console.log(toString.call(function() {})); // "[object Function]"
 \subsection{\jsextensible}
 
 オブジェクトが拡張可能かどうか判定するためのフラグです。
-Booleanの値をとります。
+Boolean値をとります。
 
 \subsection{\jsget(P)}
 
@@ -455,7 +455,7 @@ String型での\jsgetownprop はここで説明したものと異なります(�
 呼ばれる内部メソッドです。
 
 \begin{enumerate}
- \item Oの内部メソッド\jscanput をプロパティ名Pとして呼び出した返り値が{\jsfalse}の場合、
+ \item Oの内部メソッド\jscanput をプロパティ名Pとして呼び出した結果が{\jsfalse}の場合、
  \begin{enumerate}
   \item Throwが{\jstrue} な場合、TypeError例外を投げます
   \item 違う場合は終了します
@@ -494,9 +494,9 @@ String型での\jsgetownprop はここで説明したものと異なります(�
  \item 継承されたプロパティがデータプロパティで
  \jswritable 属性が\jsfalse
  \item 継承されたプロパティがアクセサプロパティで
- \jsset が関数オブジェクト
+ \jsset 属性が関数オブジェクト
  \item 継承されたプロパティがアクセサプロパティで
- \jsset が\jsundef
+ \jsset 属性が\jsundef
 \end{enumerate}
 
 \begin{lstlisting}
@@ -635,7 +635,7 @@ console.log(+o); // 1
 
 \subsection{\jsdefownprop(P, Desc, Throw)}
 
-オブジェクトO自身にプロパティ名Pのプロパティを定義するときに呼ばれます。
+オブジェクトO自身にプロパティ名Pのプロパティを定義します。
 プロパティはプロパティディスクリプタDescを使って定義されます。
 以下の実行手順で使われる'Reject'は'Throwが{\jstrue} な場合、TypeError例外を投げ、それ以外は{\jsfalse}を返す'
 という意味です。
@@ -797,7 +797,7 @@ Object.defineProperties(o, {
 var proto = {};
 console.log(Object.getPrototypeOf(proto) === Object.prototype); // true
 var o = Object.create(proto);
-consoel.log(Object.getPrototypeOf(o) === proto); // true
+console.log(Object.getPrototypeOf(o) === proto); // true
 \end{lstlisting}
 
 

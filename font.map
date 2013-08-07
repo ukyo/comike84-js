@@ -1,11 +1,59 @@
-%%
-%% ASCII pTeX
-%%
+pcr       m               Ricty-Reqular.ttf
+pcr       b               Ricty-Bold.ttf
 
-%pcr       m               Ricty-Reqular.ttf
-%pcr       b               Ricty-Bold.ttf
-rml       H               ipaexm.ttf
-rmlv      V               ipaexm.ttf
-gbm       H               KozGoPro-Regular.otf
-gbmv      V               KozGoPro-Regular.otf
+rml           UniJIS-UTF16-H                  KozMinPro-Regular.otf
+rmlv          UniJIS-UTF16-V                  KozMinPro-Regular.otf
+rml           Identity-H                      KozMinPro-Regular.otf
+rmlv          Identity-V                      KozMinPro-Regular.otf
+rml           H                               KozMinPro-Regular.otf
+rmlv          V                               KozMinPro-Regular.otf
+unijmin-h     UniJIS-UTF16-H                  KozMinPro-Regular.otf
+unijmin-v     UniJIS-UTF16-V                  KozMinPro-Regular.otf
+cidmin-h      Identity-H                      KozMinPro-Regular.otf
+cidmin-v      Identity-V                      KozMinPro-Regular.otf
 
+gbm           UniJIS-UTF16-H                  KozGoPro-Medium.otf
+gbmv          UniJIS-UTF16-V                  KozGoPro-Medium.otf
+gbm           Identity-H                      KozGoPro-Medium.otf
+gbmv          Identity-V                      KozGoPro-Medium.otf
+gbm           H                               KozGoPro-Medium.otf
+gbmv          V                               KozGoPro-Medium.otf
+unijgoth-h    UniJIS-UTF16-H                  KozGoPro-Medium.otf
+unijgoth-v    UniJIS-UTF16-V                  KozGoPro-Medium.otf
+cidgoth-h     Identity-H                      KozGoPro-Medium.otf
+cidgoth-v     Identity-V                      KozGoPro-Medium.otf
+
+otf-ujmr-h    UniJIS-UTF16-H                  KozMinPro-Regular.otf
+otf-ujmr-v    UniJIS-UTF16-V                  KozMinPro-Regular.otf
+otf-cjmr-h    Identity-H                      KozMinPro-Regular.otf
+otf-cjmr-v    Identity-V                      KozMinPro-Regular.otf
+hminr-h       H                               KozMinPro-Regular.otf
+hminr-v       V                               KozMinPro-Regular.otf
+
+otf-ujgr-h    UniJIS-UTF16-H                  KozGoPro-Medium.otf
+otf-ujgr-v    UniJIS-UTF16-V                  KozGoPro-Medium.otf
+otf-cjgr-h    Identity-H                      KozGoPro-Medium.otf
+otf-cjgr-v    Identity-V                      KozGoPro-Medium.otf
+hgothr-h      H                               KozGoPro-Medium.otf
+hgothr-v      V                               KozGoPro-Medium.otf
+
+otf-ujmb-h    UniJIS-UTF16-H                  KozMinPro-Regular.otf
+otf-ujmb-v    UniJIS-UTF16-V                  KozMinPro-Regular.otf
+otf-cjmb-h    Identity-H                      KozMinPro-Regular.otf
+otf-cjmb-v    Identity-V                      KozMinPro-Regular.otf
+hminb-h       H                               KozMinPro-Regular.otf
+hminb-v       V                               KozMinPro-Regular.otf
+
+otf-cjgb-h    Identity-H                      KozGoPro-Medium.otf
+otf-cjgb-v    Identity-V                      KozGoPro-Medium.otf
+otf-ujgb-h    UniJIS-UTF16-H                  KozGoPro-Medium.otf
+otf-ujgb-v    UniJIS-UTF16-V                  KozGoPro-Medium.otf
+hgothb-h      H                               KozGoPro-Medium.otf
+hgothb-v      V                               KozGoPro-Medium.otf
+
+otf-ujmgr-h   UniJIS-UTF16-H                  KozGoPro-Medium.otf
+otf-ujmgr-v   UniJIS-UTF16-V                  KozGoPro-Medium.otf
+otf-cjmgr-h   Identity-H                      KozGoPro-Medium.otf
+otf-cjmgr-v   Identity-V                      KozGoPro-Medium.otf
+hmgothr-h     H                               KozGoPro-Medium.otf
+hmgothr-v     V                               KozGoPro-Medium.otf
