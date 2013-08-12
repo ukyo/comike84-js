@@ -17,6 +17,8 @@ comike84-js
 
 ##備考
 
-当日来れない方はこのレポジトリのtexファイルをビルドしてください。
+* 当日来れない方はこのレポジトリのtexファイルをビルドしてください。
+* 正誤表は[errata.md](https://github.com/ukyo/comike84-js/blob/master/errata.md)をご覧ください。
+
 
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/2.1/jp/"><img alt="クリエイティブ・コモンズ・ライセンス" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/2.1/jp/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">JavaScriptの薄い本</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="https://github.com/ukyo/comike84-js" property="cc:attributionName" rel="cc:attributionURL">ukyo</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/2.1/jp/">Creative Commons 表示 - 継承 2.1 日本 License</a>.
